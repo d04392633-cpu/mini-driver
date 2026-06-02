@@ -1,122 +1,50 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+// useState — хук для хранения данных, которые меняются и влияют на отображение
+// useEffect — хук для выполнения кода ПОСЛЕ отрисовки компонента (например, запросы к API)
+import { useState, useEffect } from 'react'
 
+// Главный компонент приложения
 function App() {
-  const [count, setCount] = useState(0)
+  // Создаём состояние для хранения ответа от сервера
+  // message — переменная с данными
+  // setMessage — функция для изменения message
+  // '' — начальное значение (пустая строка)
+  const [message, setMessage] = useState('')
 
+  // useEffect выполняется один раз при загрузке компонента
+  // [] — пустой массив зависимостей = выполнить только один раз
+  useEffect(() => {
+    // Делаем запрос к Go API
+    // fetch — встроенная функция браузера для HTTP-запросов
+    fetch('http://localhost:8080/api/hello')
+      .then(response => {
+        // response — объект ответа сервера
+        // .json() — превращает JSON-ответ в JavaScript-объект
+        // возвращает Promise, поэтому ещё один .then
+        return response.json()
+      })
+      .then(data => {
+        // data — уже распарсенный объект { message: "ок" }
+        // сохраняем в состояние через setMessage
+        setMessage(data.message)
+      })
+      .catch(error => {
+        // Если сервер недоступен или ошибка сети
+        console.error('Ошибка:', error)
+        setMessage('Ошибка подключения к серверу')
+      })
+  }, []) // ← пустой массив = эффект сработает один раз при загрузке
+
+  // JSX — HTML внутри JavaScript
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+    <div style={{ padding: '20px', fontFamily: 'Arial' }}>
+      <h1>Mini-Drive</h1>
+      
+      {/* Показываем сообщение из состояния */}
+      {/* Если message пустое — покажет "Загрузка..." */}
+      <p>Ответ от сервера: {message || 'Загрузка...'}</p>
+    </div>
   )
 }
 
+// Экспортируем компонент, чтобы использовать в main.jsx
 export default App
